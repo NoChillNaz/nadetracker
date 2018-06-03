@@ -1,0 +1,210 @@
+schedStringMarch = """
+Thursday, 2018-03-01
+Day 5 1:30PM Dismissal 
+All Day 
+
+Friday, 2018-03-02
+Day 6 3:00 Dismissal 
+All Day
+
+Monday, 2018-03-05
+Day 1 1:30 Dismissal 
+All Day
+
+Tuesday, 2018-03-06
+Day 2 3:00 Dismissal 
+All Day
+
+Wednesday, 2018-03-07
+Day 3 Special Schedule 3:00 Dismissal 
+All Day
+
+Thursday, 2018-03-08
+Day 4 3:00 Dismissal 
+All Day
+
+Friday, 2018-03-09
+Day 5 1:30PM Dismissal 
+All Day 
+
+Monday, 2018-03-12
+Day 6 3:00 Dismissal 
+All Day 
+
+Tuesday, 2018-03-13
+Day 1 1:30 Dismissal 
+All Day 
+
+Wednesday, 2018-03-14
+Day 2 3:00 Dismissal 
+All Day 
+
+Thursday, 2018-03-15
+Day 3 1:30 Dismissal 
+All Day 
+
+Friday, 2018-03-16
+No School Yay! 
+All Day 
+
+Monday, 2018-03-19
+Day 4 3:00 Dismissal 
+All Day 
+
+Tuesday, 2018-03-20
+Day 5 Special Schedule 3:00PM Dismissal 
+All Day 
+
+Wednesday, 2018-03-21
+Day 6 3:00 Dismissal 
+All Day 
+
+Thursday, 2018-03-22
+Day 1 1:30 Dismissal 
+All Day 
+
+Friday, 2018-03-23
+Day 2 3:00 Dismissal 
+All Day 
+
+Monday, 2018-03-26
+Day 3 1:30 Dismissal
+All Day 
+
+Tuesday, 2018-03-27
+Day 4 3:00 Dismissal 
+All Day 
+
+Wednesday, 2018-03-28
+Day 5 1:30PM Dismissal 
+All Day 
+
+...
+"""
+
+import smtplib
+import datetime
+
+todayList = []
+dateComboList = ["holder1", "holder2"]
+key = ["..."]
+
+nowtime = datetime.datetime.now()
+today = str(datetime.date.today())
+#today = "2018-03-21"
+todayList.append(today)
+
+lines = schedStringMarch.split("\n")
+for line in lines:
+    if line.endswith(str(todayList[0])):
+        dateComboList.append(line)
+
+lines = iter(schedStringMarch.split('\n'))
+for line in lines:
+    if line.endswith(str(todayList[0])):
+        dateComboList.append(next(lines))
+
+holderCheck = (dateComboList[-1:][0])
+holderCheckList = [holderCheck]
+if str(holderCheckList[0]) == "holder2":
+    dateComboList.append("")
+    dateComboList.append("")
+    dateComboList.append("")
+    dateComboList.append("")
+    dateComboList.append("")
+    
+dayNumAct = (dateComboList[3])
+dayNumList = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6"]
+special = ["Special"]
+todaySched = "_-Block, _-Block, _-Block"
+
+#2017-2018 freshamn stuff below
+onlyMeDay1 = "Geography, Chinese, Math"
+onlyMeDay2 = "Film, Biology, English, Religion"
+onlyMeDay3 = "Chinese, Math, Religion"
+onlyMeDay4 = "Film, English, Religion, Biology"
+onlyMeDay5 = "Math, Religion, Chinese"
+onlyMeDay6 = "Film, Religion, Biology, English"
+
+if dayNumAct.startswith(str(dayNumList[0])):
+    todaySched = "A-Block, B-Block, C-Block"
+elif dayNumAct.startswith(str(dayNumList[1])):
+    todaySched = "D-Block, E-Block, F-Block, G-Block"
+elif dayNumAct.startswith(str(dayNumList[2])):
+    todaySched = "B-Block, C-Block, A-Block"
+elif dayNumAct.startswith(str(dayNumList[3])):
+    todaySched = "D-Block, F-Block, G-Block, E-Block"
+elif dayNumAct.startswith(str(dayNumList[4])):
+    todaySched = "C-Block, A-Block, B-Block"
+elif dayNumAct.startswith(str(dayNumList[5])):
+    todaySched = "D-Block, G-Block, E-Block, F-Block"
+elif any(word in dayNumAct for word in special):
+    todaySched = ("Special schedule, block switch.")
+else:
+    todaySched = ("School is not in session today.")
+
+onlyMe = True
+onlyMeClassNames = ""
+if onlyMe == True:
+    if todaySched.startswith("A-Block, B-Block"):
+        onlyMeClassNames = onlyMeDay1
+    elif todaySched.startswith("D-Block, E-Block"):
+        onlyMeClassNames = onlyMeDay2
+    elif todaySched.startswith("B-Block, C-Block"):
+        onlyMeClassNames = onlyMeDay3
+    elif todaySched.startswith("D-Block, F-Block"):
+        onlyMeClassNames = onlyMeDay4
+    elif todaySched.startswith("C-Block, A-Block"):
+        onlyMeClassNames = onlyMeDay5
+    elif todaySched.startswith("D-Block, G-Block"):
+        onlyMeClassNames = onlyMeDay6
+        
+print("----------------------------------------------------------------")        
+if todaySched.startswith("School"):
+    finalPass = ("Here's the schedule for today, " + today + ":" """
+    
+    """ + todaySched)
+elif onlyMe == True:
+    finalPass = ("Here's the schedule for today, " + str(dateComboList[2]) + " // " + dateComboList[3] + """
+             
+        """ + todaySched + """
+             
+        """ + onlyMeClassNames)
+else:
+    finalPass = ("Here's the schedule for today, " + str(dateComboList[2]) + " // " + dateComboList[3] + """
+             
+        """ + todaySched)
+
+print(finalPass)
+print("----------------------------------------------------------------")
+
+gmailUser = "nadetracker@gmail.com"
+gmailPassword = "nadetrackerpassword"
+
+sentFrom = gmailUser
+to = ["cjnazarian21@chaminet.org"]
+if todaySched.startswith("School"):
+    subject = "Today, " + today + "'s Schedule"
+else:
+    subject = "Today, " + dateComboList[-2:][0] + "'s Schedule"
+
+body = "Body\n\n- NadeTracker"
+
+email_text = """  
+From: %s  
+To: %s  
+Subject: %s
+
+%s
+""" % (sentFrom, ", ".join(to), subject, finalPass)
+
+try:  
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.ehlo()
+    server.login(gmailUser, gmailPassword)
+    server.sendmail(sentFrom, to, email_text)
+    server.close()
+ 
+    print('Email sent!')
+except:  
+    print("Email Error")
